@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 import os
 from sqlmodel import SQLModel, Field, create_engine, Session
 import resend
+from fastapi.responses import FileResponse, RedirectResponse
 
 
 
@@ -49,11 +50,26 @@ def send_email(name:str, email:str):
     #print(f"pretending to email {name} at {email}")
 
 
+
+@app.get("/thank-you")
+def thank_you_page():
+    return FileResponse("static/thank_you.html")
+
+
+
+
 @app.post("/submit")
 def submit(data: Annotated[Submission, Form()], background_tasks: BackgroundTasks):
     save_submission(data.name, data.email)
     background_tasks.add_task(send_email, data.name, data.email)
 
-    return {"status": "received"}
+    return RedirectResponse(url="/thank-you", status_code=303)
+
+
+@app.get("/")
+def form_page():
+    return FileResponse("static/index.html")
+
+
 
 
