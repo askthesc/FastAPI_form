@@ -2,21 +2,22 @@
 <html>
 <head>
     <title>Sumbmit PO here</title>
+    <link rel="stylesheet" href="/static/style.css">
 
 </head>
 <body>
 <form action="/submit" method="post">
     <label>
-        Name:
+        Name: <span class="required-star">*</span>
         <input type="text" name="name" required>
     </label>
     <label>
-        Email:
+        Email: <span class="required-star">*</span>
         <input type="email" name="email" required>
     </label>
 
     <label>
-        Expected Last Day:
+        Expected Last Day: <span class="required-star">*</span>
         <input type="date" name="expected_last_date" required>
     </label>
 

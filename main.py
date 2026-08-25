@@ -6,6 +6,7 @@ import os
 from sqlmodel import SQLModel, Field, create_engine, Session
 import resend
 from fastapi.responses import FileResponse, RedirectResponse
+from fastapi.staticfiles import StaticFiles
 from datetime import date
 from datetime import datetime
 
@@ -15,7 +16,7 @@ app = FastAPI()
 env = load_dotenv()
 resend.api_key = os.environ['RESEND_API_KEY']
 engine = create_engine(os.environ['DATABASE_URL'])
-
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
 class SubmissionDB(SQLModel, table=True):

@@ -18,7 +18,7 @@ load_dotenv()
 config = context.config
 
 config.set_main_option("sqlalchemy.url", os.environ["DATABASE_URL"])
-
+print("USING DATABASE URL:", os.environ["DATABASE_URL"])
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
