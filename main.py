@@ -6,8 +6,8 @@ import os
 from sqlmodel import SQLModel, Field, create_engine, Session
 import resend
 from fastapi.responses import FileResponse, RedirectResponse
-
-
+from datetime import date
+from datetime import datetime
 
 
 app = FastAPI()
@@ -22,16 +22,21 @@ class SubmissionDB(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     name: str
     email: str
+    expected_last_date: date
+    submitted_at: datetime = Field(default_factory=datetime.utcnow)
+    notes: Optional[str] = None
 
 SQLModel.metadata.create_all(engine)
 
 class Submission(BaseModel):
     name:str
     email: EmailStr
+    expected_last_date: date
+    notes: Optional[str] = None
 
-def save_submission(name: str, email:str):
+def save_submission(name: str, email:str, expected_last_date: date, notes:Optional[str] = None):
     with Session(engine) as session:
-        row = SubmissionDB(name=name, email=email)
+        row = SubmissionDB(name=name, email=email, expected_last_date=expected_last_date, notes=notes)
         session.add(row)
         session.commit()
 
@@ -60,7 +65,7 @@ def thank_you_page():
 
 @app.post("/submit")
 def submit(data: Annotated[Submission, Form()], background_tasks: BackgroundTasks):
-    save_submission(data.name, data.email)
+    save_submission(data.name, data.email, data.expected_last_date, data.notes)
     background_tasks.add_task(send_email, data.name, data.email)
 
     return RedirectResponse(url="/thank-you", status_code=303)
