@@ -1,8 +1,10 @@
+import logging
 import os
 from datetime import date, datetime
 from typing import Annotated
-import logging
+
 import resend
+import resend.exceptions
 from dotenv import load_dotenv
 from fastapi import BackgroundTasks, FastAPI, Form
 from fastapi.responses import FileResponse, RedirectResponse
@@ -63,7 +65,7 @@ def send_email(name: str, email: str):
                 "html": "<p>just saying hi</p>",
             }
         )
-    except Exception as e:
+    except resend.exceptions.ResendError as e:
         logger.error(f"Failed to send email to {email}: {e}")
     # print(f"pretending to email {name} at {email}")
 
